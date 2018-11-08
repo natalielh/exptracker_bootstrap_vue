@@ -1,0 +1,281 @@
+<!--https://bootstrap-vue.js.org/docs/reference/starter-templates/
+
+Nice Example:
+https://github.com/rdegges/cryptocompare
+https://developer.okta.com/blog/2017/09/06/build-a-cryptocurrency-comparison-site-with-vuejs
+
+REFERENCES USED:
+https://stackoverflow.com/questions/38744932/how-to-call-multiple-function-with-v-onclick
+https://stackoverflow.com/questions/51988385/vue-js-bootstrap-vue-dynamically-change-alert-variant
+https://stackoverflow.com/questions/147528/how-do-i-force-a-div-block-to-extend-to-the-bottom-of-a-page-even-if-it-has-no-c
+
+-->
+
+   <!DOCTYPE html>
+   <html lang="en" style="height: 100%">
+     <head>
+
+       <!-- Required meta tags -->
+       <meta charset="utf-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+       <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+       <title>Assignment 2 - Bootstrap-Vue</title>
+
+       <!-- Required Stylesheets -->
+       <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+       <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+
+       <!-- Required scripts -->
+       <!--script src="https://unpkg.com/vue"></script-->
+
+       <!--Vue.js link-->
+       <script type = "text/javascript" src = "js/vue.js"></script>
+
+       <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+       <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+     </head>
+
+     <body style="height: 100%">
+
+       <!-- Our application root element which contains all bootstrap-Vue elements -->
+       <div id="app" style="background-color:white">
+
+         <div id = "title" class="text-center pt-2">
+         <h2>Simple Expense Tracker</h2>
+        </div>
+
+         <!-- expense modal -->
+         <b-modal v-model="exp_modalShow">
+           New expense entry!<br>
+           You have entered {{text1}} and ${{text2}}.
+         </b-modal>
+
+         <!-- income modal -->
+         <b-modal v-model="inc_modalShow">
+           New income entry!<br>
+           You have entered {{text3}} and ${{text4}}.
+         </b-modal>
+
+         <!-- Tabs with card integration -->
+          <b-card no-body>
+
+              <b-tabs small card v-model="tabIndex">
+
+                  <!-- expense entry tab -->
+                  <b-tab title="EXPENSES">
+
+                    Enter an expense: <b-form-input v-model="text1"
+                                  type="text"
+                                  placeholder="expense"></b-form-input>
+
+                    Enter a cost: <b-form-input v-model="text2"
+                                  type="number"
+                                  placeholder="$"></b-form-input>
+
+                    <div class="text-center pt-2 pb-4">
+                      <b-button :size="size" variant="primary" @click="exp_buttonEvent(); alertEvent();">
+                          Add New Expense
+                      </b-button>
+                    </div>
+
+                    <!-- EXPENSE LEDGER WITHIN ENTRY TAB -->
+                    <b-table small hover :items="exp_items"></b-table>
+<!--
+                      <b-card no-body>
+                        <p class = "text-center">
+                          You have entered:
+                        </p>
+                      <b-table small hover :items="exp_items"></b-table>
+                      </b-card>
+-->
+
+                  </b-tab>
+
+                  <!-- income entry tab -->
+                  <b-tab title = "INCOME">
+
+                    Enter an income: <b-form-input v-model = "text3"
+                                  type = "text"
+                                  placeholder = "income"></b-form-input>
+
+                    Enter an amount: <b-form-input v-model = "text4"
+                                  type = "number"
+                                  placeholder = "$"></b-form-input>
+
+                    <div class="text-center pt-2 pb-4">
+                      <b-button :size="size" variant="success" @click="inc_buttonEvent(); alertEvent();">
+                          Add New Income
+                      </b-button>
+                    </div>
+
+                    <!-- INCOME LEDGER WITHIN ENTRY TAB -->
+                    <b-table small hover :items="inc_items"></b-table>
+
+                  </b-tab>
+
+                  <!-- TOTALS tab -->
+                  <b-tab title = "TOTALS">
+                    <h6>You are currently spending ${{totalExpense}}</h6>
+                    <h6>You are currently making ${{totalIncome}}</h6>
+                  </b-tab>
+
+                  <!-- expense ledger tab -->
+<!--
+                  <b-tab title="Expense Ledger">
+                      You have entered:
+                      <b-table striped hover :items="exp_items"></b-table>
+                  </b-tab>
+-->
+
+                  <!-- income ledger tab -->
+<!--
+                  <b-tab title="Income Ledger">
+                      You have entered:
+                      <b-table striped hover :items="inc_items"></b-table>
+                  </b-tab>
+-->
+
+                  <!-- expense list tab -->
+                  <!--
+                  <b-tab title="Expense List">
+                    Here is the same info in a list:
+
+                    <ol>
+                      <li v-for="item in exp_items">{{ item }}</li>
+                    </ol>
+
+                  </b-tab>
+                  -->
+
+              </b-tabs>
+          </b-card>
+
+
+          <div class="text-center p-4">
+              <!-- alerts -->
+              <b-alert :show="g_warning_show" variant="warning">{{ net_text }}</b-alert>
+              <b-alert :show="s_warning_show" variant="danger">{{ net_text }}</b-alert>
+              <b-alert :show="n_warning_show" variant="success">{{ net_text }}</b-alert>
+          </div>
+
+
+
+          <!-- Control buttons-->
+          <!--
+          <div class="text-center">
+              <b-button-group class="mt-2">
+                <b-btn @click="tabIndex--">Previous</b-btn>
+                <b-btn @click="tabIndex++">Next</b-btn>
+              </b-button-group>
+              <br>
+              <span class="text-muted">Current Tab: {{tabIndex}}</span>
+          </div>
+        -->
+
+       </div>
+
+
+
+       <!-- Start running your app -->
+       <script>
+
+         window.app = new Vue({
+           el: "#app",
+           data: {
+             //Variables go here. key : value pairs. Comma separated
+             tabIndex : 0,
+             text1 : "",
+             text2 : "",
+             text3 : "",
+             text4 : "",
+             size : "",
+             variant : "primary",
+             alert_variant : "",
+             g_warning_show : false,  //gentle warning show
+             s_warning_show : false,  //strong warning show
+             n_warning_show : false,  //alert for breaking even or net gain
+             //alert_show : false,
+             exp_modalShow : false,
+             inc_modalShow : false,
+             exp_items : [],
+             inc_items : [],
+             totalExpense : 0,  //these numbers must begin at 0, not null
+             totalIncome : 0,
+             net_gain : 0,
+             net_text : ""
+
+           },
+           methods: {
+
+             //Methods go here. Comma separated
+             exp_buttonEvent(){
+
+               this.exp_modalShow = !this.exp_modalShow;
+
+               var num_exp_items = this.exp_items.length;
+               this.exp_items.push({expense : this.text1, cost : this.text2});
+               //this.tabIndex++;
+               this.totalExpense += Number(this.text2);
+
+               // //warning
+               // if(this.totalIncome < this.totalExpense)
+               // this.alert_show = true;
+
+               // this.text1 = "";
+               // this.text2 = "";
+               // this.show = false;
+               // this.$nextTick(() => { this.show = true });
+
+             },
+
+             inc_buttonEvent(){
+
+               this.inc_modalShow = !this.inc_modalShow;
+
+               var num_inc_items = this.inc_items.length;
+               this.inc_items.push({income : this.text3, amount : this.text4});
+               //this.tabIndex++;
+               this.totalIncome += Number(this.text4);
+
+               // //warning
+               // if(this.totalIncome < this.totalExpense)
+               // this.alert_show = true;
+
+             },
+
+             alertEvent(){
+
+              this.net_gain = this.totalIncome - this.totalExpense;
+
+               if(this.net_gain < -100){
+                 //if you spend over $100 more than you are making:
+                 this.g_warning_show = false;
+                 this.s_warning_show = true;
+                 this.n_warning_show = false;
+                 this.net_text = "Your NET LOSS is $" + -1 * this.net_gain;
+               } else if(this.net_gain < 0 && this.net_gain >= -100){
+                 //if you spend more than you are making but this value is $100 or lower:
+                 this.g_warning_show = true;
+                 this.s_warning_show = false;
+                 this.n_warning_show = false;
+                 this.net_text = "Your NET LOSS is $" + -1 * this.net_gain;
+               } else {
+                 //otherwise, if you are making more than you are spending, or breaking even, do not show the negative warnings
+                 this.g_warning_show = false;
+                 this.s_warning_show = false;
+                 this.n_warning_show = true;
+                 this.net_text = "Your NET GAIN is $" + this.net_gain;
+               }
+
+             }
+
+           }
+
+         })
+
+       </script>
+
+
+     </body>
+   </html>
